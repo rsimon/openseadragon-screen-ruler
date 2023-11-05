@@ -1,0 +1,64 @@
+<script lang="ts">
+  import { onMount } from 'svelte';
+  import OpenSeadragon from 'openseadragon';
+    
+  export let viewer: OpenSeadragon.Viewer;
+
+  // Current layer scale
+  let scale = 1;
+
+  // CSS layer transform
+  let transform: string;
+
+  const onUpdateViewport = () => {
+    const containerWidth = viewer.viewport.getContainerSize().x;
+
+    const zoom = viewer.viewport.getZoom(true);
+    const flipped = viewer.viewport.getFlip();
+
+    const p = viewer.viewport.pixelFromPoint(new OpenSeadragon.Point(0, 0), true);
+    if (flipped)
+      p.x = containerWidth - p.x;
+    
+    const scaleY = zoom * containerWidth / viewer.world.getContentFactor();
+    const scaleX = flipped ? - scaleY : scaleY;
+    const rotation = viewer.viewport.getRotation();
+
+    transform = `translate(${p.x}, ${p.y}) scale(${scaleX}, ${scaleY}) rotate(${rotation})`;
+
+    scale = zoom * containerWidth / viewer.world.getContentFactor();
+  }
+
+  onMount(() => {
+    viewer.addHandler('update-viewport', onUpdateViewport);
+
+    return () => {
+      viewer.removeHandler('update-viewport', onUpdateViewport);
+    }
+  });
+</script>
+
+<svg class="osd-screenruler">
+  <g transform={transform}>
+    
+  </g>
+</svg>
+
+<style>
+  svg {
+    box-sizing: border-box;
+    height: 100%;
+    left: 0;
+    outline: none;
+    position: absolute;
+    top: 0;
+    touch-action: none;
+    width: 100%;
+
+    -webkit-user-select: none; 
+      -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+            user-select: none;
+  }
+</style>

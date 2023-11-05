@@ -25,9 +25,24 @@
       import { init } from '../src';
 
       window.onload = function() {
+        var viewer = OpenSeadragon({
+          id: 'openseadragon',
+          prefixUrl: 'https://cdn.jsdelivr.net/npm/openseadragon@4.1/build/openseadragon/images/', 
+          crossOriginPolicy: 'Anonymous',
+          showRotationControl: true,
+          gestureSettingsMouse: {
+            clickToZoom: false
+          },
+          gestureSettingsTouch: {
+            pinchRotate: true
+          },
+          tileSources: [{
+            type: 'image',
+            url: '33054-000002-0001.jpg'
+          }]        
+        });
 
-        init();
-
+        init(viewer);
       }
     </script>
   </body>
