@@ -1,0 +1,36 @@
+{
+  "name": "openseadragon-screen-ruler",
+  "version": "0.1.0",
+  "description": "A screen ruler overlay for OpenSeadragon",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rsimon/openseadragon-screen-ruler.git"
+  },
+  "author": "Rainer Simon",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/rsimon/openseadragon-screen-ruler/issues"
+  },
+  "homepage": "https://github.com/rsimon/openseadragon-screen-ruler#readme",
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^2.4.6",
+    "@tsconfig/svelte": "^5.0.2",
+    "@types/node": "^20.8.10",
+    "@types/openseadragon": "^3.0.8",
+    "svelte": "^4.2.2",
+    "svelte-preprocess": "^5.0.4",
+    "typescript": "^5.2.2",
+    "vite": "^4.5.0",
+    "vite-plugin-dts": "^3.6.3"
+  },
+  "peerDependencies": {
+    "openseadragon": "^4.1.0"
+  }
+}
