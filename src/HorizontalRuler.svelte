@@ -21,10 +21,14 @@
 
   $: handleSize = 6 / scale;
 
-  const onOpen = () => {
-    const { x, y } = viewer.world.getItemAt(0)?.source?.dimensions;
-    dimensions = [x, y];
-    vpos = y / 2;
+  const init = () => {
+    const dim = viewer.world.getItemAt(0)?.source?.dimensions;
+
+    if (dim) {
+      dimensions = [dim.x, dim.y];
+      vpos = dim.y / 2;
+      onUpdateViewport();
+    }
   }
 
   const onUpdateViewport = () => {
@@ -39,7 +43,9 @@
     
     const scaleY = zoom * containerWidth / viewer.world.getContentFactor();
     const scaleX = flipped ? - scaleY : scaleY;
-    const rotation = viewer.viewport.getRotation();
+
+    // @ts-ignore note: getRotation(true <- realtime value) only since OSD 4!
+    const rotation = viewer.viewport.getRotation(true);
 
     transform = `translate(${p.x}, ${p.y}) scale(${scaleX}, ${scaleY}) rotate(${rotation})`;
 
@@ -73,11 +79,14 @@
   }
 
   onMount(() => {
-    viewer.addHandler('open', onOpen);
+    viewer.addHandler('open', init);
     viewer.addHandler('update-viewport', onUpdateViewport);
 
+    // In case OSD has already loaded
+    init();
+
     return () => {
-      viewer.removeHandler('page', onOpen);
+      viewer.removeHandler('page', init);
       viewer.removeHandler('update-viewport', onUpdateViewport);
     }
   });

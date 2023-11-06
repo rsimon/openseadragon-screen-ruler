@@ -1,9 +1,9 @@
 import type OpenSeadragon from 'openseadragon';
-import ScreenRulerOverlay from './ScreenRulerOverlay.svelte';
+import HorizontalRuler from './HorizontalRuler.svelte';
 
 export const init = (viewer: OpenSeadragon.Viewer) => {
 
-  const overlay = new ScreenRulerOverlay({
+  const overlay = new HorizontalRuler({
     target: viewer.element.querySelector('.openseadragon-canvas')!,
     props: { viewer }
   });
