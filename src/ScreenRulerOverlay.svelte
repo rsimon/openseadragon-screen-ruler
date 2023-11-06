@@ -4,11 +4,28 @@
     
   export let viewer: OpenSeadragon.Viewer;
 
-  // Current layer scale
+  // Current image dimensions
+  let dimensions: [number, number];
+
+  // Current OSD viewer scale
   let scale = 1;
 
   // CSS layer transform
   let transform: string;
+
+  // Ruler vertical pos
+  let vpos: number;
+
+  // Pointer state: ruler grabbed or not
+  let grabbed = false;
+
+  $: handleSize = 6 / scale;
+
+  const onOpen = () => {
+    const { x, y } = viewer.world.getItemAt(0)?.source?.dimensions;
+    dimensions = [x, y];
+    vpos = y / 2;
+  }
 
   const onUpdateViewport = () => {
     const containerWidth = viewer.viewport.getContainerSize().x;
@@ -29,18 +46,64 @@
     scale = zoom * containerWidth / viewer.world.getContentFactor();
   }
 
+  const onPointerDown = (evt: PointerEvent) => {
+    grabbed = true;
+
+    const target = evt.target as Element;
+    target.setPointerCapture(evt.pointerId);
+
+    viewer.setMouseNavEnabled(false);
+  }
+
+  const onPointerMove = (evt: PointerEvent) => {
+    if (grabbed) {
+      const { offsetX, offsetY } = evt;
+      const { y } = viewer.viewport.viewerElementToImageCoordinates(new OpenSeadragon.Point(offsetX, offsetY));
+      vpos = y;
+    }
+  }
+
+  const onPointerUp = (evt: PointerEvent) => {
+    grabbed = false;
+
+    const target = evt.target as Element;
+    target.releasePointerCapture(evt.pointerId);
+
+    viewer.setMouseNavEnabled(true);
+  }
+
   onMount(() => {
+    viewer.addHandler('open', onOpen);
     viewer.addHandler('update-viewport', onUpdateViewport);
 
     return () => {
+      viewer.removeHandler('page', onOpen);
       viewer.removeHandler('update-viewport', onUpdateViewport);
     }
   });
 </script>
 
 <svg class="osd-screenruler">
-  <g transform={transform}>
-    
+  <g 
+    transform={transform}
+    on:pointermove={onPointerMove} 
+    on:pointerup={onPointerUp}>
+
+    {#if dimensions}
+      <line 
+        x1={0} 
+        y1={vpos} 
+        x2={dimensions[0]} 
+        y2={vpos} />
+
+      <rect 
+        class="handle" 
+        x={0} 
+        y={vpos - handleSize / 2} 
+        width={dimensions[0]} 
+        height={handleSize} 
+        on:pointerdown={onPointerDown} />
+    {/if}
   </g>
 </svg>
 
@@ -60,5 +123,16 @@
         -ms-user-select: none;
         -o-user-select: none;
             user-select: none;
+  }
+
+  line {
+    stroke: red;
+    stroke-width: 2px;
+    vector-effect: non-scaling-stroke;
+  }
+
+  rect.handle {
+    fill: transparent;
+    cursor: ns-resize;
   }
 </style>

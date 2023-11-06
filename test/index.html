@@ -3,7 +3,6 @@
   <head>
     <meta charset='utf-8' />
     <title>OpenSeadragon Screen Ruler</title>
-    <script src="https://cdn.jsdelivr.net/npm/openseadragon@4.1.0/build/openseadragon/openseadragon.min.js"></script>
     <style>
       html, body, #openseadragon {
         margin: 0;
@@ -22,6 +21,7 @@
     <div id="openseadragon"></div>
 
     <script type="module">
+      import OpenSeadragon from 'openseadragon';
       import { init } from '../src';
 
       window.onload = function() {
