@@ -9,7 +9,9 @@
   $: rotation = 180 * Math.atan(slant) / Math.PI;
 </script>
 
-<g transform={`rotate(${rotation}, ${x}, ${y})`}>
+<g 
+  class={$$restProps.class}
+  transform={`rotate(${rotation}, ${x}, ${y})`}>
   <path 
     d={`M${x - dx} ${y - 1.5 * dy} l${dx} ${- dy} l${dx} ${dy}`} />
 

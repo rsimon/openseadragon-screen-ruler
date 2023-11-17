@@ -141,8 +141,9 @@
   });
 </script>
 
-<svg class="osd-screenruler">
+<svg>
   <g 
+    class="osd-screenruler"
     transform={transform}
     on:pointermove={onPointerMove}>
 
@@ -157,7 +158,7 @@
         on:pointerdown={onPointerDown('ruler')} />
 
       <polygon 
-        class="h-pos-handle" 
+        class="h-pos-handle hideable" 
         points={[
           [0, d - handleSize / 2],
           [dimensions.width, y2 - handleSize / 2],
@@ -167,18 +168,21 @@
         on:pointerdown={onPointerDown('ruler')} />
 
       <SlantHandle 
+        class="hideable"
         x={handlePositions.left} 
         y={k * handlePositions.left + d} 
         scale={scale}
         on:pointerdown={onPointerDown('left-slant')} />
 
       <DragIndicator 
+        class="hideable"
         x={handlePositions.middle} 
         y={k * handlePositions.middle + d} 
         scale={scale} 
         slant={k} />
 
       <SlantHandle 
+        class="hideable"
         x={handlePositions.right} 
         y={k * handlePositions.right + d} 
         scale={scale}
@@ -203,6 +207,15 @@
         -ms-user-select: none;
         -o-user-select: none;
             user-select: none;
+  }
+
+  .osd-screenruler :global(.hideable *) {
+    opacity: 0;
+    transition: opacity 250ms ease-in-out;
+  }
+
+  .osd-screenruler:hover :global(.hideable *) {
+    opacity: 1;
   }
 
   line.ruler {

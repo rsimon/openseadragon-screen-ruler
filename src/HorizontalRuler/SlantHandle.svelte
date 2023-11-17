@@ -7,18 +7,20 @@
   $: inner = 6 / scale;
 </script>
 
-<circle
-  class="slant-handle-outer"
-  cx={x} 
-  cy={y} 
-  r={outer} 
-  on:pointerdown />
+<g class={$$restProps.class}>
+  <circle
+    class="slant-handle-outer"
+    cx={x} 
+    cy={y} 
+    r={outer} 
+    on:pointerdown />
 
-<circle
-  class="slant-handle-inner"
-  cx={x} 
-  cy={y} 
-  r={inner} />
+  <circle
+    class="slant-handle-inner"
+    cx={x} 
+    cy={y} 
+    r={inner} />
+</g>
 
 <style>
   circle.slant-handle-outer {
