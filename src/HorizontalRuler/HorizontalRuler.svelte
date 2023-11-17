@@ -1,9 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import OpenSeadragon from 'openseadragon';
+  import DragIndicator from './DragIndicator.svelte';
+  import SlantHandle from './SlantHandle.svelte';
     
   export let viewer: OpenSeadragon.Viewer;
-  export let handlePadding = 20;
+  export let handlePadding = 8;
 
   // Current image dimensions
   let dimensions: { width: number, height: number };
@@ -21,7 +23,7 @@
   // Pointer state: ruler grabbed or not
   let grabbed: 'ruler' | 'left-slant' | 'right-slant' | undefined;
 
-  $: handleSize = 6 / scale;
+  $: handleSize = 8 / scale;
 
   let handlePositions: { left: number, middle: number, right: number };
 
@@ -115,8 +117,6 @@
   }
 
   const onPointerUp = (evt: PointerEvent) => {
-    console.log('up');
-
     grabbed = undefined;
 
     const target = evt.target as Element;
@@ -147,39 +147,41 @@
     on:pointermove={onPointerMove}>
 
     {#if dimensions}
+      {@const y2 = k * dimensions.width + d}
       <line 
+        class="ruler" 
         x1={0} 
         y1={d} 
         x2={dimensions.width} 
-        y2={k * dimensions.width + d} 
+        y2={y2} 
         on:pointerdown={onPointerDown('ruler')} />
 
-      <!-- rect 
+      <polygon 
         class="h-pos-handle" 
-        x={0} 
-        y={d - handleSize / 2} 
-        width={dimensions.width} 
-        height={handleSize} 
-        on:pointerdown={onPointerDown('ruler')} / -->
+        points={[
+          [0, d - handleSize / 2],
+          [dimensions.width, y2 - handleSize / 2],
+          [dimensions.width, y2 + handleSize / 2],
+          [0, d + handleSize / 2]
+        ].map(t => t.join(',')).join(' ')}
+        on:pointerdown={onPointerDown('ruler')} />
 
-      <circle 
-        class="l-slant-handle"
-        cx={handlePositions.left} 
-        cy={k * handlePositions.left + d} 
-        r={100} 
+      <SlantHandle 
+        x={handlePositions.left} 
+        y={k * handlePositions.left + d} 
+        scale={scale}
         on:pointerdown={onPointerDown('left-slant')} />
 
-      <circle 
-        class="middle-dot"
-        cx={handlePositions.middle} 
-        cy={k * handlePositions.middle + d} 
-        r={50} />
+      <DragIndicator 
+        x={handlePositions.middle} 
+        y={k * handlePositions.middle + d} 
+        scale={scale} 
+        slant={k} />
 
-      <circle 
-        class="r-slant-handle"
-        cx={handlePositions.right} 
-        cy={k * handlePositions.right + d} 
-        r={100} 
+      <SlantHandle 
+        x={handlePositions.right} 
+        y={k * handlePositions.right + d} 
+        scale={scale}
         on:pointerdown={onPointerDown('right-slant')} />
     {/if}
   </g>
@@ -203,14 +205,13 @@
             user-select: none;
   }
 
-  line {
+  line.ruler {
     stroke: red;
     stroke-width: 2px;
     vector-effect: non-scaling-stroke;
-    cursor: ns-resize;
   }
 
-  rect.h-pos-handle {
+  polygon.h-pos-handle {
     fill: transparent;
     cursor: ns-resize;
   }
