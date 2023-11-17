@@ -211,11 +211,13 @@
 
   .osd-screenruler :global(.hideable *) {
     opacity: 0;
-    transition: opacity 250ms ease-in-out;
+    transition: opacity 350ms ease-in-out;
+    transition-delay: 1s;
   }
 
   .osd-screenruler:hover :global(.hideable *) {
     opacity: 1;
+    transition-delay: 0s;
   }
 
   line.ruler {
