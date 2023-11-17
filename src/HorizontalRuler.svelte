@@ -53,6 +53,9 @@
   }
 
   const onPointerDown = (evt: PointerEvent) => {
+    if (evt.button !== 0) // Block right mouse button
+      return; 
+
     grabbed = true;
 
     const target = evt.target as Element;
