@@ -6,7 +6,11 @@
   export let handlePadding = 20;
 
   // Current image dimensions
-  let dimensions: [number, number];
+  let dimensions: { width: number, height: number };
+
+  // Current rule params (y = kx + d)
+  let k: number;
+  let d: number;
 
   // Current OSD viewer scale
   let scale = 1;
@@ -14,22 +18,21 @@
   // CSS layer transform
   let transform: string;
 
-  // Ruler vertical pos
-  let vpos: number;
-
   // Pointer state: ruler grabbed or not
-  let grabbed = false;
+  let grabbed: 'ruler' | 'left-slant' | 'right-slant' | undefined;
 
   $: handleSize = 6 / scale;
 
-  $: handlePositions = dimensions ? [0, dimensions[0] / 2, dimensions[0]] : undefined;
+  let handlePositions: { left: number, middle: number, right: number };
 
   const init = () => {
     const dim = viewer.world.getItemAt(0)?.source?.dimensions;
 
     if (dim) {
-      dimensions = [dim.x, dim.y];
-      vpos = dim.y / 2;
+      dimensions = { width: dim.x, height: dim.y };
+      k = 0;
+      d = dim.y / 2;
+
       onUpdateViewport();
     }
   }
@@ -65,17 +68,17 @@
     const { x, width } = viewportBounds;
 
     const left = Math.max(0, x + handlePadding / scale);
-    const right = Math.min(dimensions[0], x + width - handlePadding / scale);
+    const right = Math.min(dimensions.width, x + width - handlePadding / scale);
     const middle = left + (right - left) / 2;
 
-    handlePositions = [left, middle, right];
+    handlePositions = { left, middle, right };
   }
 
-  const onPointerDown = (evt: PointerEvent) => {
+  const onPointerDown = (handle: 'ruler' | 'left-slant' | 'right-slant') => (evt: PointerEvent) => {
     if (evt.button !== 0) // Block right mouse button
       return; 
 
-    grabbed = true;
+    grabbed = handle;
 
     const target = evt.target as Element;
     target.setPointerCapture(evt.pointerId);
@@ -84,15 +87,19 @@
   }
 
   const onPointerMove = (evt: PointerEvent) => {
-    if (grabbed) {
+    if (grabbed === 'ruler') {
       const { offsetX, offsetY } = evt;
       const { y } = viewer.viewport.viewerElementToImageCoordinates(new OpenSeadragon.Point(offsetX, offsetY));
-      vpos = y;
+      d = y;
+    } else if (grabbed === 'left-slant') {
+
+    } else if (grabbed === 'right-slant') {
+      
     }
   }
 
   const onPointerUp = (evt: PointerEvent) => {
-    grabbed = false;
+    grabbed = undefined;
 
     const target = evt.target as Element;
     target.releasePointerCapture(evt.pointerId);
@@ -123,34 +130,37 @@
     {#if dimensions}
       <line 
         x1={0} 
-        y1={vpos} 
-        x2={dimensions[0]} 
-        y2={vpos} />
+        y1={d} 
+        x2={dimensions.width} 
+        y2={k * dimensions.width + d} />
 
       <rect 
-        class="handle" 
+        class="h-pos-handle" 
         x={0} 
-        y={vpos - handleSize / 2} 
-        width={dimensions[0]} 
+        y={d - handleSize / 2} 
+        width={dimensions.width} 
         height={handleSize} 
-        on:pointerdown={onPointerDown} />
+        on:pointerdown={onPointerDown('ruler')} />
 
-      {#if handlePositions}
-        <circle 
-          cx={handlePositions[0]} 
-          cy={vpos} 
-          r={100} />
+      <circle 
+        class="l-slant-handle"
+        cx={handlePositions.left} 
+        cy={k * handlePositions.left + d} 
+        r={100} 
+        on:pointerdown={onPointerDown('left-slant')} />
 
-        <circle 
-          cx={handlePositions[1]} 
-          cy={vpos} 
-          r={50} />
+      <circle 
+        class="middle-dot"
+        cx={handlePositions.middle} 
+        cy={k * handlePositions.middle + d} 
+        r={50} />
 
-        <circle 
-          cx={handlePositions[2]} 
-          cy={vpos} 
-          r={100} />
-      {/if}
+      <circle 
+        class="r-slant-handle"
+        cx={handlePositions.right} 
+        cy={k * handlePositions.right + d} 
+        r={100} 
+        on:pointerdown={onPointerDown('right-slant')} />
     {/if}
   </g>
 </svg>
@@ -179,7 +189,7 @@
     vector-effect: non-scaling-stroke;
   }
 
-  rect.handle {
+  rect.h-pos-handle {
     fill: transparent;
     cursor: ns-resize;
   }
