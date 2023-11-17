@@ -87,18 +87,36 @@
   }
 
   const onPointerMove = (evt: PointerEvent) => {
-    if (grabbed === 'ruler') {
-      const { offsetX, offsetY } = evt;
-      const { y } = viewer.viewport.viewerElementToImageCoordinates(new OpenSeadragon.Point(offsetX, offsetY));
-      d = y;
-    } else if (grabbed === 'left-slant') {
+    if (!grabbed)
+      return;
 
+    const { offsetX, offsetY } = evt;
+    const { x, y } = viewer.viewport.viewerElementToImageCoordinates(new OpenSeadragon.Point(offsetX, offsetY));
+
+    if (grabbed === 'ruler') {
+      d = y - k * x;
+    } else if (grabbed === 'left-slant') {
+      const y1 = k * handlePositions.right + d;
+
+      const deltaX = handlePositions.right - handlePositions.left;
+      const deltaY = y - y1;
+
+      k = - deltaY / deltaX;
+      d = y1 - k * handlePositions.right;
     } else if (grabbed === 'right-slant') {
-      
+      const y0 = k * handlePositions.left + d;
+
+      const deltaX = handlePositions.right - handlePositions.left;
+      const deltaY = y0 - y;
+
+      k = - deltaY / deltaX;
+      d = y0 - k * handlePositions.left;
     }
   }
 
   const onPointerUp = (evt: PointerEvent) => {
+    console.log('up');
+
     grabbed = undefined;
 
     const target = evt.target as Element;
@@ -108,6 +126,8 @@
   }
 
   onMount(() => {
+    document.addEventListener('pointerup', onPointerUp);
+
     viewer.addHandler('open', init);
     viewer.addHandler('update-viewport', onUpdateViewport);
 
@@ -124,23 +144,23 @@
 <svg class="osd-screenruler">
   <g 
     transform={transform}
-    on:pointermove={onPointerMove} 
-    on:pointerup={onPointerUp}>
+    on:pointermove={onPointerMove}>
 
     {#if dimensions}
       <line 
         x1={0} 
         y1={d} 
         x2={dimensions.width} 
-        y2={k * dimensions.width + d} />
+        y2={k * dimensions.width + d} 
+        on:pointerdown={onPointerDown('ruler')} />
 
-      <rect 
+      <!-- rect 
         class="h-pos-handle" 
         x={0} 
         y={d - handleSize / 2} 
         width={dimensions.width} 
         height={handleSize} 
-        on:pointerdown={onPointerDown('ruler')} />
+        on:pointerdown={onPointerDown('ruler')} / -->
 
       <circle 
         class="l-slant-handle"
@@ -187,6 +207,7 @@
     stroke: red;
     stroke-width: 2px;
     vector-effect: non-scaling-stroke;
+    cursor: ns-resize;
   }
 
   rect.h-pos-handle {
