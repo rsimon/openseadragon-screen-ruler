@@ -1,5 +1,5 @@
 import type OpenSeadragon from 'openseadragon';
-import HorizontalRuler from './HorizontalRuler.svelte';
+import { HorizontalRuler } from './HorizontalRuler';
 
 export const init = (viewer: OpenSeadragon.Viewer) => {
 

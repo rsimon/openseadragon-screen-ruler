@@ -3,6 +3,7 @@
   import OpenSeadragon from 'openseadragon';
     
   export let viewer: OpenSeadragon.Viewer;
+  export let handlePadding = 20;
 
   // Current image dimensions
   let dimensions: [number, number];
@@ -20,6 +21,8 @@
   let grabbed = false;
 
   $: handleSize = 6 / scale;
+
+  $: handlePositions = dimensions ? [0, dimensions[0] / 2, dimensions[0]] : undefined;
 
   const init = () => {
     const dim = viewer.world.getItemAt(0)?.source?.dimensions;
@@ -50,6 +53,22 @@
     transform = `translate(${p.x}, ${p.y}) scale(${scaleX}, ${scaleY}) rotate(${rotation})`;
 
     scale = zoom * containerWidth / viewer.world.getContentFactor();
+
+    setHandlePositions();
+  }
+
+  const setHandlePositions = () => {
+    const { viewport } = viewer;
+
+    // Bounds of the current viewport in image coordinates
+    const viewportBounds = viewport.viewportToImageRectangle(viewport.getBounds(true));
+    const { x, width } = viewportBounds;
+
+    const left = Math.max(0, x + handlePadding / scale);
+    const right = Math.min(dimensions[0], x + width - handlePadding / scale);
+    const middle = left + (right - left) / 2;
+
+    handlePositions = [left, middle, right];
   }
 
   const onPointerDown = (evt: PointerEvent) => {
@@ -115,6 +134,23 @@
         width={dimensions[0]} 
         height={handleSize} 
         on:pointerdown={onPointerDown} />
+
+      {#if handlePositions}
+        <circle 
+          cx={handlePositions[0]} 
+          cy={vpos} 
+          r={100} />
+
+        <circle 
+          cx={handlePositions[1]} 
+          cy={vpos} 
+          r={50} />
+
+        <circle 
+          cx={handlePositions[2]} 
+          cy={vpos} 
+          r={100} />
+      {/if}
     {/if}
   </g>
 </svg>
