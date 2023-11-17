@@ -17,26 +17,14 @@
     d={`M${x - dx} ${y + 1.5 * dy} l${dx} ${dy} l${dx} ${-dy}`} />
 </g>
 
-<!-- circle
-  class="drag-indicator"
-  cx={x} 
-  cy={y} 
-  r={r} 
-  on:pointerdown / -->
-
-
-
 <style>
   path {
     fill: transparent;
+    pointer-events: none;
     stroke: #ff0000;
     stroke-linejoin: bevel;
     stroke-linecap: round;
     stroke-width: 2px;
     vector-effect: non-scaling-stroke;
-  }
-
-  circle.drag-indicator {
-    pointer-events: none;
   }
 </style>
