@@ -18,6 +18,8 @@
   </head>
 
   <body>
+    <button id="toggle">TOGGLE</button>
+
     <div id="openseadragon"></div>
 
     <script type="module">
@@ -42,7 +44,11 @@
           }]        
         });
 
-        init(viewer);
+        var ruler = init(viewer);
+
+        document.getElementById('toggle').addEventListener('click', function() {
+          ruler.setVisible(!ruler.isVisible());
+        });
       }
     </script>
   </body>

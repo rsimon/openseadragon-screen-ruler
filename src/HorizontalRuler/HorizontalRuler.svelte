@@ -6,6 +6,7 @@
     
   export let viewer: OpenSeadragon.Viewer;
   export let handlePadding = 8;
+  export let visible: boolean;
 
   // Current image dimensions
   let dimensions: { width: number, height: number };
@@ -141,55 +142,57 @@
   });
 </script>
 
-<svg>
-  <g 
-    class="osd-screenruler"
-    transform={transform}
-    on:pointermove={onPointerMove}>
+{#if visible}
+  <svg>
+    <g 
+      class="osd-screenruler"
+      transform={transform}
+      on:pointermove={onPointerMove}>
 
-    {#if dimensions}
-      {@const y2 = k * dimensions.width + d}
-      <line 
-        class="ruler" 
-        x1={0} 
-        y1={d} 
-        x2={dimensions.width} 
-        y2={y2} 
-        on:pointerdown={onPointerDown('ruler')} />
+      {#if dimensions}
+        {@const y2 = k * dimensions.width + d}
+        <line 
+          class="ruler" 
+          x1={0} 
+          y1={d} 
+          x2={dimensions.width} 
+          y2={y2} 
+          on:pointerdown={onPointerDown('ruler')} />
 
-      <polygon 
-        class="h-pos-handle hideable" 
-        points={[
-          [0, d - handleSize / 2],
-          [dimensions.width, y2 - handleSize / 2],
-          [dimensions.width, y2 + handleSize / 2],
-          [0, d + handleSize / 2]
-        ].map(t => t.join(',')).join(' ')}
-        on:pointerdown={onPointerDown('ruler')} />
+        <polygon 
+          class="h-pos-handle hideable" 
+          points={[
+            [0, d - handleSize / 2],
+            [dimensions.width, y2 - handleSize / 2],
+            [dimensions.width, y2 + handleSize / 2],
+            [0, d + handleSize / 2]
+          ].map(t => t.join(',')).join(' ')}
+          on:pointerdown={onPointerDown('ruler')} />
 
-      <SlantHandle 
-        class="hideable"
-        x={handlePositions.left} 
-        y={k * handlePositions.left + d} 
-        scale={scale}
-        on:pointerdown={onPointerDown('left-slant')} />
+        <SlantHandle 
+          class="hideable"
+          x={handlePositions.left} 
+          y={k * handlePositions.left + d} 
+          scale={scale}
+          on:pointerdown={onPointerDown('left-slant')} />
 
-      <DragIndicator 
-        class="hideable"
-        x={handlePositions.middle} 
-        y={k * handlePositions.middle + d} 
-        scale={scale} 
-        slant={k} />
+        <DragIndicator 
+          class="hideable"
+          x={handlePositions.middle} 
+          y={k * handlePositions.middle + d} 
+          scale={scale} 
+          slant={k} />
 
-      <SlantHandle 
-        class="hideable"
-        x={handlePositions.right} 
-        y={k * handlePositions.right + d} 
-        scale={scale}
-        on:pointerdown={onPointerDown('right-slant')} />
-    {/if}
-  </g>
-</svg>
+        <SlantHandle 
+          class="hideable"
+          x={handlePositions.right} 
+          y={k * handlePositions.right + d} 
+          scale={scale}
+          on:pointerdown={onPointerDown('right-slant')} />
+      {/if}
+    </g>
+  </svg>
+{/if}
 
 <style>
   svg {
