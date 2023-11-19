@@ -44,7 +44,9 @@
           }]        
         });
 
-        var ruler = init(viewer);
+        var ruler = init(viewer, {
+          visible: false
+        });
 
         document.getElementById('toggle').addEventListener('click', function() {
           ruler.setVisible(!ruler.isVisible());

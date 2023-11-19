@@ -1,9 +1,10 @@
 import type OpenSeadragon from 'openseadragon';
 import { HorizontalRuler } from './HorizontalRuler';
+import type { ScreenRulerOpts } from './ScreenRulerOpts';
 
-export const init = (viewer: OpenSeadragon.Viewer) => {
+export const init = (viewer: OpenSeadragon.Viewer, opts?: ScreenRulerOpts) => {
 
-  let _visible = false;
+  let _visible = opts?.visible === undefined ? true : opts.visible;
 
   const overlay = new HorizontalRuler({
     target: viewer.element.querySelector('.openseadragon-canvas')!,
