@@ -1,18 +1,21 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, createEventDispatcher } from 'svelte';
   import OpenSeadragon from 'openseadragon';
   import DragIndicator from './DragIndicator.svelte';
   import SlantHandle from './SlantHandle.svelte';
+
+  const dispatch = createEventDispatcher<{ changeSlope: number }>();
     
   export let viewer: OpenSeadragon.Viewer;
   export let handlePadding = 8;
   export let visible: boolean;
+  export let initialSlope: number;
 
   // Current image dimensions
   let dimensions: { width: number, height: number };
 
   // Current rule params (y = kx + d)
-  let k: number;
+  let k: number = initialSlope;
   let d: number;
 
   // Current OSD viewer scale
@@ -33,7 +36,6 @@
 
     if (dim) {
       dimensions = { width: dim.x, height: dim.y };
-      k = 0;
       d = dim.y / 2;
 
       onUpdateViewport();
@@ -106,6 +108,8 @@
 
       k = - deltaY / deltaX;
       d = y1 - k * handlePositions.right;
+
+      dispatch('changeSlope', k);
     } else if (grabbed === 'right-slant') {
       const y0 = k * handlePositions.left + d;
 
@@ -114,6 +118,8 @@
 
       k = - deltaY / deltaX;
       d = y0 - k * handlePositions.left;
+
+      dispatch('changeSlope', k);
     }
   }
 
