@@ -17,10 +17,19 @@
       .openseadragon-canvas {
         outline: none;
       }
+
+      #toggle {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 999;
+      }
     </style>
   </head>
 
   <body>
+    <button id="toggle">TOGGLE</button>
+
     <div id="openseadragon"></div>
 
     <script>
@@ -42,7 +51,14 @@
           }]        
         });
 
-        OSDScreenRuler.init(viewer);
+        var ruler = OSDScreenRuler.init(viewer, {
+          persistentSlope: true,
+          persistentVisibility: true
+        });
+
+        document.getElementById('toggle').addEventListener('click', function() {
+          ruler.setVisible(!ruler.isVisible());
+        });
       }
     </script>
   </body>
