@@ -57,4 +57,4 @@ document.getElementById('toggle').addEventListener('click', function() {
 ```
 
 - Online demo: https://screen-ruler.rainersimon.io/
-- Source code: https://github.com/rsimon/openseadragon-screen-ruler/blob/main/example/index.html
+- Full example source code: https://github.com/rsimon/openseadragon-screen-ruler/blob/main/example/index.html
