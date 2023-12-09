@@ -1,4 +1,4 @@
-# OpenSeadrago Screen Ruler
+# OpenSeadragon Screen Ruler
 
 A screen ruler overlay for OpenSeadragon.
 
