@@ -61,12 +61,8 @@ document.getElementById('toggle').addEventListener('click', function() {
 
 ## Acknowledgements
 
-This Annotorious extension exists thanks to the support of [Brumfield Labs](https://www.brumfieldlabs.com/),
+This OpenSeadragon plugin exists thanks to the support of [Brumfield Labs](https://www.brumfieldlabs.com/),
 creators of [FromThePage](https://fromthepage.com/).
 
 <a href="https://fromthepage.com/">
 <img src="https://raw.githubusercontent.com/rsimon/openseadragon-screen-ruler/main/fromthepage_logo.jpg" style="width: 150px" /></a><br/><br/>
-
-Furthermore, thanks and acknowledgements go out to [Johannes Baiter](https://github.com/jbaiter) whose
-[Mirador Textoverlay plugin](https://github.com/dbmdz/mirador-textoverlay) served as a guide
-for this extension.
