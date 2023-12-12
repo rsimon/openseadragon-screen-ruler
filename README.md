@@ -49,7 +49,7 @@ Create a button anywhere on your page (with a unique Id for convenience).
 After initializing the ruler, attach a click handler to the button.
 
 ```js
-document.getElementById('toggle').addEventListener('click', function() {
+document.getElementById('toggle-ruler').addEventListener('click', function() {
   // The ruler has `.setVisible` and `.isVisible` functions to set and
   // get visibility status. The line below will toggle the current status.
   ruler.setVisible(!ruler.isVisible());
